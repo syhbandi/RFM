@@ -63,7 +63,7 @@ class Autoload extends AutoloadConfig
 	 * @var array<string, string>
 	 */
 	public $classmap = [
-		'PHPExcel' => APPPATH . 'ThirdParty/PHPExcel/PHPExcel.php',
+		'PHPExcel' => APPPATH . 'third_party/PHPExcel/PHPExcel.php',
 	];
 
 	/**
