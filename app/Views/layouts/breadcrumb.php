@@ -6,7 +6,7 @@
   <div class="col-auto ml-auto text-right mt-n1">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb bg-transparent p-0 mt-1 mb-0">
-        <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
         <?php if (isset($title)) : ?>
           <li class="breadcrumb-item"><a href="/<?= service('uri')->getSegment(1) . '/' . service('uri')->getSegment(2) ?>"><?= $title ?></a></li>
         <?php endif; ?>

@@ -9,15 +9,15 @@
         Menu
       </li>
 
-      <li class="sidebar-item <?= isset($title) ? '' : 'active';  ?>">
+      <li class="sidebar-item <?= service('uri')->getSegment(1) == 'home' || service('uri')->getSegment(1) == '' ? 'active' : '';  ?>">
         <a class="sidebar-link" href="/">
           <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
         </a>
       </li>
 
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="/galeri">
-          <i class="align-middle" data-feather="user"></i> <span class="align-middle">Galeri</span>
+      <li class="sidebar-item <?= isset($title) ? 'active' : '' ?>">
+        <a class="sidebar-link" href="/data">
+          <ion-icon name="server-outline" class="align-middle mr-3"></ion-icon> <span class="align-middle">Data</span>
         </a>
       </li>
 
