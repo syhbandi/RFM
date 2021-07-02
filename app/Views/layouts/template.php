@@ -74,12 +74,26 @@
     <!-- TRUE -->
     <script>
       Swal.fire({
+        position: 'top-end',
         icon: 'success',
-        title: 'Sukses',
-        text: "<?= session()->getFlashdata('sukses') ?>",
+        title: '<?= session()->getFlashdata('sukses') ?>',
         showConfirmButton: false,
-        timer: '2000'
-      });
+        timer: 3000,
+        timerProgressBar: true,
+        toast: true,
+      })
+    </script>
+  <?php elseif (session()->getFlashdata('error') != null) : ?>
+    <script>
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: '<?= session()->getFlashdata('error') ?>',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        toast: true,
+      })
     </script>
   <?php endif ?>
 </body>

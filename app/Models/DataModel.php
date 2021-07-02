@@ -14,7 +14,7 @@ class DataModel extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = ['nama', 'alamat', 'jumlah_terpasang', 'keterangan', 'tgl_daftar', 'tgl_aktif', 'paket_id'];
+	protected $allowedFields        = ['nama', 'alamat', 'jumlah_terpasang', 'activity_nosa', 'layanan', 'keterangan', 'tgl_daftar', 'tgl_aktif', 'paket_id'];
 
 	// Dates
 	protected $useTimestamps        = false;
@@ -57,5 +57,18 @@ class DataModel extends Model
 			$this->limit($length, $start);
 		}
 		return $this->get();
+	}
+
+	public function getData($id = null, $start = null, $length = null)
+	{
+		if ($id == null) {
+			$builder = $this->db->table($this->table);
+			$builder->select('*');
+			$builder->join('paket', 'paket.id = ' . $this->table . '.paket_id');
+			if ($start != null || $length != null) {
+				$builder->limit($length, $start);
+			}
+			return $builder->get();
+		}
 	}
 }

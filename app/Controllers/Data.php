@@ -33,7 +33,8 @@ class Data extends BaseController
 			$data = $this->dataModel->search($search_value, $start, $length)->getResult();
 		} else {
 			$total_count = $this->dataModel->get()->getNumRows();
-			$data = $this->dataModel->limit($length, $start)->get()->getResult();
+			// $data = $this->dataModel->limit($length, $start)->get()->getResult();
+			$data = $this->dataModel->getData(null, $length, $start)->getResult();
 		}
 
 		return json_encode([
@@ -59,7 +60,8 @@ class Data extends BaseController
 		// lakukan validasi -> jika gagal kembalikan respon error -> jika berhasil eksekusi code selanjutnya
 		if (!$this->validate($rules)) {
 			return \json_encode([
-				'status' => '500',
+				'success' => false,
+				'validator' => false,
 				'msg' => $this->validator->getErrors(),
 				'tokenCSRF' => csrf_hash(),
 			]);
@@ -83,14 +85,14 @@ class Data extends BaseController
 			$msg = $id != '' ? 'Data diperbaharui' : 'Data Baru ditambahkan!';
 			$this->session->setFlashdata('sukses', $msg);
 			return \json_encode([
-				'status' => '200',
+				'success' => true,
 				'redirect' => '/data'
 			]);
 		}
 
 		// jika gagal simpan kembalikan error
 		return \json_encode([
-			'status' => '500',
+			'success' => false,
 			'msg' => 'Error saat menyimpan data'
 		]);
 	}
@@ -110,19 +112,37 @@ class Data extends BaseController
 
 	public function delete()
 	{
-		# code...
+		$hapus = $this->dataModel->delete($this->request->getVar('id'));
+		if ($hapus) {
+			$this->session->setFlashdata('sukses', 'Data dihapus!');
+			return \json_encode([
+				'success' => true,
+				'msg' => 'Berhasil Menghapus data',
+				'icon' => 'success'
+			]);
+		}
+
+		return \json_encode([
+			'success' => false,
+			'msg' => 'Gagal menghaspus data',
+			'icon' => 'error'
+		]);
 	}
 
 	public function exportTemplate()
 	{
-		$fileName = 'tes.xlsx';
+		$fileName = 'Format Import.xlsx';
 		$spreadsheet = new Spreadsheet();
 
 		$sheet = $spreadsheet->getActiveSheet();
 		$sheet->setCellValue('A1', 'Nama');
 		$sheet->setCellValue('B1', 'Alamat');
-		$sheet->setCellValue('C1', 'Email');
-		$rows = 2;
+		$sheet->setCellValue('C1', 'tipe paket');
+		$sheet->setCellValue('D1', 'Activity NOSA');
+		$sheet->setCellValue('E1', 'Jumlah Terpasang');
+		$sheet->setCellValue('F1', 'Layanan');
+		$sheet->setCellValue('G1', 'Tgl. Daftar');
+		$sheet->setCellValue('H1', 'Tgl. Aktif');
 		$writer = new Xlsx($spreadsheet);
 		$filepath = $fileName;
 
@@ -142,43 +162,40 @@ class Data extends BaseController
 
 	public function uploadData()
 	{
+		$file = $this->request->getFile("fileExcel");
+		$ext = $file->getClientExtension();
+		$reader = $ext == 'xls' ? new \PhpOffice\PhpSpreadsheet\Reader\Xls() : new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+		$spreadsheet = $reader->load($file);
+		$TempData = $spreadsheet->getActiveSheet()->toArray();
+		array_shift($TempData);
+		$data = [];
 
-		$file = $this->request->getFile("file");
-
-		$file_name = $file->getTempName();
-
-		$student = array();
-
-		$csv_data = array_map('str_getcsv', file($file_name));
-
-		if (count($csv_data) > 0) {
-
-			$index = 0;
-
-			foreach ($csv_data as $data) {
-
-				if ($index > 0) {
-
-					$student[] = array(
-						"name" => $data[1],
-						"email" => $data[2],
-						"mobile" => $data[3],
-						"designation" => $data[4],
-					);
-				}
-				$index++;
-			}
-
-			$builder = $this->db->table('tbl_students');
-
-			$builder->insertBatch($student);
-
-			$session = session();
-
-			$session->setFlashdata("success", "Data saved successfully");
-
-			return redirect()->to(base_url('upload-student'));
+		for ($i = 0; $i < count($TempData); $i++) {
+			$data[$i]['nama'] = $TempData[$i][0];
+			$data[$i]['alamat'] = $TempData[$i][1];
+			$data[$i]['paket_id'] = (trim($TempData[$i][2]) == 'AO | INET + TLP' ? 1 : (trim($TempData[$i][2]) == 'AO | INET + IPTV' ? 2 : (trim($TempData[$i][2]) == 'AO | INET' ? 3 : 4)));
+			$data[$i]['activity_nosa'] = $TempData[$i][3];
+			$data[$i]['jumlah_terpasang'] = $TempData[$i][4];
+			$data[$i]['layanan'] = $TempData[$i][5];
+			// $data[$i]['tgl_daftar'] = $TempData[$i][6];
+			// $data[$i]['tgl_aktif'] = $TempData[$i][7];
 		}
-		return view("upload-file");
+
+		// return json_encode([
+		// 	'success' => true,
+		// 	'data' => $data
+		// ]);
+		$save = $this->dataModel->insertBatch($data);
+		if ($save) {
+			$this->session->setFlashdata('sukses', 'Import data berhasil!');
+			return json_encode([
+				"success" => true,
+				'redirect' => '/data'
+			]);
+		}
+		return json_encode([
+			"success" => false,
+			'msg' => 'Import data gagal!'
+		]);
 	}
 }

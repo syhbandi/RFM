@@ -2,7 +2,7 @@
 <?= $this->section('content'); ?>
 <div class="card">
   <div class="card-body">
-
+    <button class="btn btn-info" id="tesToast">Tes Toast</button>
     <a class="btn btn-primary" href="<?= current_url(); ?>/add"><i class="fas fa-plus-circle"></i> Tambah data</a>
   </div>
 </div>
@@ -14,11 +14,13 @@
           <th>no</th>
           <th>nama</th>
           <th>alamat</th>
+          <th>Tipe Paket</th>
+          <th>Activity NOSA</th>
+          <th>Total Paket</th>
           <th>jumlah terpasang</th>
-          <th>keterangan</th>
+          <th>layanan</th>
           <th>tgl. daftar</th>
           <th>tgl. aktif</th>
-          <th>ID Paket</th>
           <th></th>
         </tr>
       </thead>
@@ -28,10 +30,22 @@
 </div>
 
 <script>
+  $('#tesToast').click(function(e) {
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'Your work has been saved',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      toast: true,
+    })
+  })
   if ($('#table-data').length > 0) {
     $('#table-data').DataTable({
       processing: true,
       serverSide: true,
+      scrollX: true,
       ajax: {
         url: '<?= current_url() ?>/loadData',
         type: 'post'
@@ -50,19 +64,25 @@
           'data': 'alamat'
         },
         {
+          'data': 'tipe_paket'
+        },
+        {
+          'data': 'activity_nosa'
+        },
+        {
+          'data': 'jumlah_paket'
+        },
+        {
           'data': 'jumlah_terpasang'
         },
         {
-          'data': 'keterangan'
+          'data': 'layanan'
         },
         {
           'data': 'tgl_daftar'
         },
         {
           'data': 'tgl_aktif'
-        },
-        {
-          'data': 'paket_id'
         },
         {
           'data': 'id',

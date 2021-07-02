@@ -23,7 +23,6 @@
 						data: fd,
 						success: function(res) {
 							$(`input[name=csrf_test_name]`).val(res.tokenCSRF);
-							console.log(res.tes);
 							if (!res.success && !res.validator) {
 								for (const prop in res.msg) {
 									if (Object.hasOwnProperty.call(res.msg, prop)) {
@@ -68,7 +67,15 @@
 						},
 						dataType: 'json',
 						success: function(res) {
-							location.reload();
+							if (res.success) {
+								location.reload();
+							} else {
+								Swal.fire({
+									icon: res.icon,
+									title: 'Oops..',
+									text: res.msg,
+								})
+							}
 						}
 					});
 				}
@@ -77,7 +84,7 @@
 
 
 		// fungsi hapus
-		$('#tabel-ssp tbody').on('click', '.hapus', deleteRow);
+		$('.table tbody').on('click', '.hapus', deleteRow);
 		$('.deleteButton').on('click', deleteRow);
 	</script>
 

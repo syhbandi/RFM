@@ -27,9 +27,13 @@ class Pelanggan extends Migration
 				'type' => 'INT',
 				'constraint' => '5'
 			],
-			'keterangan' => [
-				'type' => 'VARCHAR',
-				'constraint' => '255'
+			'activity_nosa' => [
+				'type' => 'varchar',
+				'constraint' => 255
+			],
+			'layanan' => [
+				'type' => 'varchar',
+				'constraint' => 255
 			],
 			'tgl_daftar' => [
 				'type' => 'datetime',
@@ -39,14 +43,19 @@ class Pelanggan extends Migration
 				'type' => 'datetime',
 				// 'constraint' => '\'male\', \'female\''
 			],
+			'keterangan' => [
+				'type' => 'text',
+			],
 			'paket_id' => [
 				'type' => 'int',
-				'constraint' => '11'
-			]
+				'constraint' => '11',
+				'unsigned' => true
+			],
 		];
 
 		$this->forge->addField($fields);
 		$this->forge->addKey('id', true);
+		$this->forge->addForeignKey('paket_id', 'paket', 'id');
 		$this->forge->createTable('pelanggan', true);
 	}
 

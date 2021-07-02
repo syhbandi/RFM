@@ -2,27 +2,35 @@
 <?= $this->section('content'); ?>
 <div class="card">
   <div class="card-body">
-    <form action="" method="POST" enctype="multipart/form-data" id="form-batch">
-      <div class="form-group row mb-0">
-        <label for="fileExcel" class="col-md-2 col-sm-12">Import dari Excel</label>
-        <div class="col-md-6 col-sm-12">
-          <div class="input-group">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-              <label class="custom-file-label" for="inputGroupFile01">Pilih File</label>
+    <div class="row">
+      <div class="col-md-6 col-sm-12">
+        <form action="/data/uploadData" method="POST" enctype="multipart/form-data" id="form-batch">
+          <div class="form-group row mb-0">
+            <label for="fileExcel" class="col-md-4 col-sm-12">Import dari Excel</label>
+            <div class="col-md-8 col-sm-12">
+              <div class="input-group">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" name="fileExcel" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                  <label class="custom-file-label" for="inputGroupFile01">Pilih File</label>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-4 col-sm-12">
-          <button type="submit" class="btn btn-info" id="btnUp"><i class="fas fa-upload"></i> Unggah</button>
-          <button class="btn btn-secondary" id="export"><i class="fas fa-download"></i> Unduh Format</button>
-        </div>
+        </form>
       </div>
-    </form>
+      <div class="col-md-6 col-sm-12">
+        <button class="btn btn-secondary" id="export"><i class="fas fa-download"></i> Unduh Format</button>
+        <button type="submit" class="btn btn-info float-right" id="btnUp"><i class="fas fa-upload"></i> Unggah</button>
+      </div>
+    </div>
+
   </div>
 </div>
 <form action="/data/save" class="needs-validation" id="form-add" method="POST" novalidate>
   <div class="card">
+    <div class="card-header">
+      <button class="btn btn-secondary" onclick="history.back()"><i class="fas fa-arrow-left"></i> Kembali</button>
+    </div>
     <div class="card-body">
       <?= csrf_field() ?>
       <!-- nama -->
@@ -101,15 +109,38 @@
       </div>
     </div>
     <div class="card-footer">
-      <div class="text-center">
-        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Data</button>
-      </div>
+      <button class="btn btn-secondary" onclick="history.back()"><i class="fas fa-arrow-left"></i> Kembali</button>
+      <button type="submit" class="btn btn-primary float-right"><i class="fas fa-save"></i> Simpan Data</button>
     </div>
   </div>
 </form>
 <script>
   $('#export').click(function() {
     window.location = '/data/exportTemplate';
+  })
+
+  $('#btnUp').click(function(e) {
+    let formData = new FormData($('#form-batch')[0]);
+    $.ajax({
+      url: $('#form-batch').attr('action'),
+      type: 'post',
+      dataType: 'json',
+      contentType: false,
+      processData: false,
+      data: formData,
+      success: function(res) {
+        console.log(res);
+        if (res.success) {
+          window.location = res.redirect
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: res.msg,
+          })
+        }
+      }
+    });
   })
 </script>
 <?= $this->endSection(); ?>
