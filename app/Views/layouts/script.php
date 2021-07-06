@@ -82,10 +82,43 @@
 			})
 		}
 
+		function deleteAll(e) {
+			e.preventDefault()
+			Swal.fire({
+				title: 'Hapus semua data?',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Hapus!',
+				cancelButtonText: 'Batal',
+			}).then((result) => {
+				if (result.isConfirmed) {
+					$.ajax({
+						url: "<?= current_url() ?>/deleteAll",
+						data: {},
+						dataType: 'json',
+						success: function(res) {
+							if (res.success) {
+								location.reload();
+							} else {
+								Swal.fire({
+									icon: res.icon,
+									title: 'Oops..',
+									text: res.msg,
+								})
+							}
+						}
+					});
+				}
+			})
+		}
+
 
 		// fungsi hapus
 		$('.table tbody').on('click', '.hapus', deleteRow);
 		$('.deleteButton').on('click', deleteRow);
+		$('#deleteAll').on('click', deleteRow);
 	</script>
 
 

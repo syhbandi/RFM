@@ -34,7 +34,7 @@ class Data extends BaseController
 		} else {
 			$total_count = $this->dataModel->get()->getNumRows();
 			// $data = $this->dataModel->limit($length, $start)->get()->getResult();
-			$data = $this->dataModel->getData(null, $length, $start)->getResult();
+			$data = $this->dataModel->getData(null, $start, $length)->getResult();
 		}
 
 		return json_encode([
@@ -55,6 +55,9 @@ class Data extends BaseController
 			'jumlah_terpasang' => ['label' => 'jumlah terpasang', 'rules'  => 'required', 'errors' => ['required' => '{field} harus diisi']],
 			'tgl_daftar' => ['label' => 'tgl. daftar', 'rules' => 'required', 'errors' => ['required' => '{field} harus diisi']],
 			'tgl_aktif' => ['label' => 'tgl. aktif', 'rules' => 'required', 'errors' => ['required' => '{field} harus diisi']],
+			'activity_nosa' => ['label' => 'Activity NOSA', 'rules' => 'required', 'errors' => ['required' => '{field} harus diisi']],
+			'paket' => ['label' => 'tipe transaksi', 'rules' => 'required', 'errors' => ['required' => '{field} harus diisi']],
+			'layanan' => ['label' => 'layanan', 'rules' => 'required', 'errors' => ['required' => '{field} harus diisi']],
 		];
 
 		// lakukan validasi -> jika gagal kembalikan respon error -> jika berhasil eksekusi code selanjutnya
@@ -75,9 +78,11 @@ class Data extends BaseController
 			'nama' => $this->request->getPost('nama'),
 			'alamat' => $this->request->getPost('alamat'),
 			'jumlah_terpasang' => $this->request->getPost('jumlah_terpasang'),
-			'keterangan' => $this->request->getPost('keterangan'),
+			'activity_nosa' => $this->request->getPost('activity_nosa'),
+			'layanan' => $this->request->getPost('layanan'),
 			'tgl_daftar' => $this->request->getPost('tgl_daftar'),
 			'tgl_aktif' => $this->request->getPost('tgl_aktif'),
+			'paket_id' => $this->request->getPost('paket'),
 		]);
 
 		// berhasil simpan kembalikan flashdata dan status berhasil
@@ -112,7 +117,8 @@ class Data extends BaseController
 
 	public function delete()
 	{
-		$hapus = $this->dataModel->delete($this->request->getVar('id'));
+		$id = $this->request->getVar('id');
+		$hapus = $id != '' ? $this->dataModel->delete(['id' => $id]) : $this->dataModel->deleteAll();
 		if ($hapus) {
 			$this->session->setFlashdata('sukses', 'Data dihapus!');
 			return \json_encode([
@@ -124,7 +130,7 @@ class Data extends BaseController
 
 		return \json_encode([
 			'success' => false,
-			'msg' => 'Gagal menghaspus data',
+			'msg' => 'Gagal menghapus data',
 			'icon' => 'error'
 		]);
 	}
@@ -160,6 +166,7 @@ class Data extends BaseController
 		exit;
 	}
 
+	// insert batch dari file excel
 	public function uploadData()
 	{
 		$file = $this->request->getFile("fileExcel");
@@ -177,8 +184,8 @@ class Data extends BaseController
 			$data[$i]['activity_nosa'] = $TempData[$i][3];
 			$data[$i]['jumlah_terpasang'] = $TempData[$i][4];
 			$data[$i]['layanan'] = $TempData[$i][5];
-			// $data[$i]['tgl_daftar'] = $TempData[$i][6];
-			// $data[$i]['tgl_aktif'] = $TempData[$i][7];
+			$data[$i]['tgl_daftar'] = date_format(date_create($TempData[$i][6]), "Y-m-d H:i:s");
+			$data[$i]['tgl_aktif'] = date_format(date_create($TempData[$i][7]), "Y-m-d H:i:s");
 		}
 
 		// return json_encode([
@@ -197,5 +204,11 @@ class Data extends BaseController
 			"success" => false,
 			'msg' => 'Import data gagal!'
 		]);
+	}
+
+	function tesData()
+	{
+		$data = $this->dataModel->getData()->getResult();
+		dd($data);
 	}
 }

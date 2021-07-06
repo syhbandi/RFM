@@ -4,6 +4,7 @@
   <div class="card-body">
     <button class="btn btn-info" id="tesToast">Tes Toast</button>
     <a class="btn btn-primary" href="<?= current_url(); ?>/add"><i class="fas fa-plus-circle"></i> Tambah data</a>
+    <button class="btn btn-danger" id="deleteAll"><i class="fas fa-trash" id="deleteAll"></i> Hapus semua</button>
   </div>
 </div>
 <div class="card">
@@ -90,11 +91,35 @@
           "sortable": false,
           "render": function(id, type, full, meta) {
             return `<div class="btn-group btn-group-sm" role="group" aria-label="group">
-                        <a href="/admin/member/update/${id}" class="btn btn-warning"><i class="far fa-edit"></i></a> <a href="" class="btn btn-danger hapus" data-id="${id}"><i class="fas fa-trash"></i></a>
+                        <a href="/data/update/${id}" class="btn btn-warning"><i class="far fa-edit"></i></a> <a href="" class="btn btn-danger hapus" data-id="${id}"><i class="fas fa-trash"></i></a>
                       </div>`;
           }
         }
-      ]
+      ],
+      language: {
+        "decimal": ",",
+        "emptyTable": "Tidak ada data",
+        "info": "Tampil _START_ ke _END_ dari _TOTAL_ entri",
+        "infoEmpty": "Menampilkan 0 ke 0 dari 0 entri",
+        "infoFiltered": "(filter dari _MAX_ total entri)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Menampilkan _MENU_ entri",
+        "loadingRecords": "Loading...",
+        "processing": "Sedang Proses...",
+        "search": "Cari:",
+        "zeroRecords": "Tidak ada record yang sesuai",
+        "paginate": {
+          "first": "Pertama",
+          "last": "Terakhir",
+          "next": "Selanjutnya",
+          "previous": "Sebelumnya"
+        },
+        "aria": {
+          "sortAscending": ": activate to sort column ascending",
+          "sortDescending": ": activate to sort column descending"
+        }
+      }
     });
   }
 </script>

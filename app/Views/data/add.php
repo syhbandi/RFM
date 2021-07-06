@@ -55,7 +55,7 @@
       </div>
       <!-- tipe transaksi -->
       <div class="form-group row">
-        <label for="tipe_transaksi" class="col-md-2 col-sm-12 control-label  text-capitalize">tipe transaksi</label>
+        <label for="paket" class="col-md-2 col-sm-12 control-label  text-capitalize">tipe transaksi</label>
         <div class="col-md-6 col-sm-12">
           <select name="paket" id="paket" class="form-control" required>
             <?php foreach ($dataPaket as $item) : ?>
@@ -77,13 +77,23 @@
           </div>
         </div>
       </div>
-      <!-- keterangan -->
+      <!-- activity_nosa -->
       <div class="form-group row">
-        <label for="keterangan" class="col-md-2 col-sm-12 control-label text-capitalize">keterangan</label>
+        <label for="activity_nosa" class="col-md-2 col-sm-12 control-label text-capitalize">activity_nosa</label>
         <div class="col-md-6 col-sm-12">
-          <textarea name="keterangan" id="keterangan" rows="5" class="form-control" placeholder="keterangan"></textarea>
+          <textarea name="activity_nosa" id="activity_nosa" rows="5" class="form-control" placeholder="activity nosa"></textarea>
           <div class="invalid-feedback text-capitalize">
-            keterangan wajib diisi
+            activity nosa wajib diisi
+          </div>
+        </div>
+      </div>
+      <!-- layanan -->
+      <div class="form-group row">
+        <label for="layanan" class="col-md-2 col-sm-12 control-label text-capitalize">layanan</label>
+        <div class="col-md-6 col-sm-12">
+          <textarea name="layanan" id="layanan" rows="5" class="form-control" placeholder="Layanan"></textarea>
+          <div class="invalid-feedback text-capitalize">
+            layanan wajib diisi
           </div>
         </div>
       </div>

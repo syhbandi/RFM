@@ -45,6 +45,7 @@ class Pelanggan extends Migration
 			],
 			'keterangan' => [
 				'type' => 'text',
+				'null' => true,
 			],
 			'paket_id' => [
 				'type' => 'int',

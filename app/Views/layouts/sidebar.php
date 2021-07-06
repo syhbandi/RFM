@@ -15,15 +15,15 @@
         </a>
       </li>
 
-      <li class="sidebar-item <?= isset($title) ? 'active' : '' ?>">
+      <li class="sidebar-item <?= isset($title) && $title == 'Data' ? 'active' : '' ?>">
         <a class="sidebar-link" href="/data">
           <ion-icon name="server-outline" class="align-middle mr-3"></ion-icon> <span class="align-middle">Data</span>
         </a>
       </li>
 
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="/member">
-          <i class="align-middle" data-feather="user"></i> <span class="align-middle">Member</span>
+      <li class="sidebar-item <?= isset($title) && $title == 'RFM' ? 'active' : '' ?>">
+        <a class="sidebar-link" href="/rfm">
+          <i class="align-middle" data-feather="user"></i> <span class="align-middle">RFM</span>
         </a>
       </li>
 

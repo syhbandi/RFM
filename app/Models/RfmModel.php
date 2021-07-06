@@ -4,17 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class DataModel extends Model
+class RfmModel extends Model
 {
 	protected $DBGroup              = 'default';
-	protected $table                = 'pelanggan';
+	protected $table                = 'rfm';
 	protected $primaryKey           = 'id';
 	protected $useAutoIncrement     = true;
 	protected $insertID             = 0;
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = ['nama', 'alamat', 'jumlah_terpasang', 'activity_nosa', 'layanan', 'keterangan', 'tgl_daftar', 'tgl_aktif', 'paket_id'];
+	protected $allowedFields        = ['r', 'f', 'm', 'pelanggan_id'];
 
 	// Dates
 	protected $useTimestamps        = false;
@@ -44,11 +44,9 @@ class DataModel extends Model
 	{
 		$arrLike = [
 			'nama' => $key,
-			'alamat' => $key,
-			'jumlah_terpasang' => $key,
-			'keterangan' => $key,
-			'tgl_daftar' => $key,
-			'tgl_aktif' => $key,
+			'r' => $key,
+			'f' => $key,
+			'm' => $key,
 		];
 
 		$this->like('id', $key);
@@ -63,18 +61,12 @@ class DataModel extends Model
 	{
 		if ($id == null) {
 			$builder = $this->db->table($this->table);
-			$builder->select('pelanggan.*, paket.tipe_paket, paket.deskripsi, paket.jumlah_paket');
-			$builder->join('paket', 'paket.id = ' . $this->table . '.paket_id');
+			$builder->select('pelanggan.nama, rfm.*');
+			$builder->join('pelanggan', 'pelanggan.id = ' . $this->table . '.pelanggan_id');
 			if ($start != null || $length != null) {
 				$builder->limit($length, $start);
 			}
 			return $builder->get();
 		}
-	}
-
-	public function deleteAll()
-	{
-		$builder = $this->db->table($this->table);
-		return $builder->emptyTable();
 	}
 }
