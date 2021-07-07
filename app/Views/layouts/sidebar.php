@@ -23,7 +23,9 @@
 
       <li class="sidebar-item <?= isset($title) && $title == 'RFM' ? 'active' : '' ?>">
         <a class="sidebar-link" href="/rfm">
-          <i class="align-middle" data-feather="user"></i> <span class="align-middle">RFM</span>
+          <!-- <i class="align-middle" data-feather="user"></i>  -->
+          <i class="fas fa-calculator align-middle mr-3"></i>
+          <span class="align-middle">RFM</span>
         </a>
       </li>
 
