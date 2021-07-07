@@ -61,7 +61,7 @@ class DataModel extends Model
 		return $this->get();
 	}
 
-	public function getData($key = '', $start, $length)
+	public function getData($key = '', $start = null, $length = null)
 	{
 		$arrLike = [
 			'pelanggan.nama' => $key,
@@ -73,16 +73,22 @@ class DataModel extends Model
 			'pelanggan.tgl_daftar' => $key,
 			'pelanggan.tgl_aktif' => $key,
 			'paket.tipe_paket' => $key,
-			// 'jumlah_paket' => $key,
 		];
+
 		$builder = $this->db->table($this->table);
 		$builder->select('pelanggan.*, paket.tipe_paket, paket.deskripsi, paket.jumlah_paket');
 		$builder->join('paket', 'paket.id = ' . $this->table . '.paket_id');
+
+		// utk fitur pencarian
 		if ($key != '') {
 			$builder->like('pelanggan.id', $key);
 			$builder->orLike($arrLike);
 		}
-		$builder->limit($length, $start);
+
+		// fitur pagination
+		if ($start != null && $length != null) {
+			$builder->limit($length, $start);
+		}
 		$builder->orderBy('pelanggan.id', 'asc');
 		return $builder->get();
 	}

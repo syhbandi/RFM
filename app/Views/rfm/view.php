@@ -2,7 +2,7 @@
 <?= $this->section('content'); ?>
 <div class="card">
   <div class="card-body">
-    <a href="#" class="btn btn-info"><i class="fas fa-sync-alt"></i> Generate RFM</a>
+    <button class="btn btn-info" id="btnGenerate"><i class="fas fa-sync-alt"></i> Generate RFM</button>
   </div>
 </div>
 
@@ -79,5 +79,22 @@
       }
     });
   }
+
+  $('#btnGenerate').click(function(e) {
+    $(this).prop('disabled', true);
+    $(this).html(`
+    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    Sedang proses...
+    `)
+    $.ajax({
+      url: '<?= current_url() ?>/generate',
+      dataType: 'json',
+      success: function(res) {
+        setTimeout(() => {
+          location.reload()
+        }, 2000);
+      }
+    })
+  })
 </script>
 <?= $this->endSection(); ?>

@@ -40,33 +40,29 @@ class RfmModel extends Model
 	protected $beforeDelete         = [];
 	protected $afterDelete          = [];
 
-	public function search($key, $start = null, $length = null)
+	public function getData($key = null, $start = null, $length = null)
 	{
 		$arrLike = [
-			'nama' => $key,
-			'r' => $key,
-			'f' => $key,
-			'm' => $key,
+			'pelanggan.nama' => $key,
+			'rfm.r' => $key,
+			'rfm.f' => $key,
+			'rfm.m' => $key,
 		];
-
-		$this->like('id', $key);
-		$this->orLike($arrLike);
-		if ($start != null || $length != null) {
-			$this->limit($length, $start);
+		$builder = $this->db->table($this->table);
+		$builder->select('pelanggan.nama, rfm.*');
+		$builder->join('pelanggan', 'pelanggan.id = ' . $this->table . '.pelanggan_id');
+		if ($key != '') {
+			$builder->orLike($arrLike);
 		}
-		return $this->get();
+		if ($start != '' || $length != '') {
+			$builder->limit($length, $start);
+		}
+		return $builder->get();
 	}
 
-	public function getData($id = null, $start = null, $length = null)
+	public function EmptyTable()
 	{
-		if ($id == null) {
-			$builder = $this->db->table($this->table);
-			$builder->select('pelanggan.nama, rfm.*');
-			$builder->join('pelanggan', 'pelanggan.id = ' . $this->table . '.pelanggan_id');
-			if ($start != null || $length != null) {
-				$builder->limit($length, $start);
-			}
-			return $builder->get();
-		}
+		$builder = $this->db->table($this->table);
+		return $builder->emptyTable();
 	}
 }

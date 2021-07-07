@@ -3,16 +3,18 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use phpDocumentor\Reflection\Types\This;
+use App\Models\DataModel;
+use App\Models\RfmModel;
+use DateTime;
 
 class Rfm extends BaseController
 {
+
 	public function __construct()
 	{
-		$this->data['title'] = 'RFM';
-		$this->rfmModel = model('RfmModel');
+		$this->data = ['title' => 'RFM'];
+		$this->rfmModel = new RfmModel();
 	}
-
 	public function index()
 	{
 		return view('rfm/view', $this->data);
@@ -27,11 +29,10 @@ class Rfm extends BaseController
 		$search_value = $_REQUEST['search']['value'];
 
 		if (!empty($search_value)) {
-			$total_count = $this->rfmModel->search($search_value)->getNumRows();
+			$total_count = $this->rfmModel->getData($search_value, $start, $length)->getNumRows();
 			$data = $this->rfmModel->search($search_value, $start, $length)->getResult();
 		} else {
-			$total_count = $this->rfmModel->get()->getNumRows();
-			// $data = $this->rfmModel->limit($length, $start)->get()->getResult();
+			$total_count = $this->rfmModel->getData(null, $start, $length)->getNumRows();
 			$data = $this->rfmModel->getData(null, $start, $length)->getResult();
 		}
 
@@ -41,5 +42,52 @@ class Rfm extends BaseController
 			"recordsFiltered" => $total_count,
 			"data" => $data
 		]);
+	}
+
+	public function generate()
+	{
+		// hapus dulu isi table
+		$this->rfmModel->emptyTable();
+
+		// ambil data pelanggan
+		$dataModel = new DataModel();
+		$dataPelanggan = $dataModel->getData()->getResultArray();
+
+		foreach ($dataPelanggan as $pelanggan) {
+			// hitung recency
+			$tgl_daftar = strtotime($pelanggan['tgl_daftar']);
+			$tgl_aktif = strtotime($pelanggan['tgl_aktif']);
+			$selisih = $tgl_aktif - $tgl_daftar;
+			$recency = $selisih / (24 * 60 * 60);
+
+			// hitung frequency
+			$frequency = $pelanggan['jumlah_paket'] == $pelanggan['jumlah_terpasang'] ? 1 : 0;
+
+			// hitung monetary
+			$monetary = $pelanggan['jumlah_terpasang'];
+
+			$this->rfmModel->save([
+				'r' => $recency,
+				'f' => $frequency,
+				'm' => $monetary,
+				'pelanggan_id' => $pelanggan['id'],
+			]);
+		}
+
+		$this->session->setFlashdata('sukses', 'Generate Selesai');
+		return \json_encode([
+			'success' => true,
+			'redirect' => '/rfm'
+		]);
+	}
+
+	public function tes()
+	{
+		$dataModel = new DataModel();
+		$dataPelanggan = $dataModel->getData()->getResultArray();
+		$tgl_daftar = strtotime($dataPelanggan[0]['tgl_daftar']);
+		$tgl_aktif = strtotime($dataPelanggan[0]['tgl_aktif']);
+		$recency = $tgl_aktif - $tgl_daftar;
+		echo $recency / (24 * 60 * 60);
 	}
 }
