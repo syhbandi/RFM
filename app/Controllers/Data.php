@@ -22,18 +22,17 @@ class Data extends BaseController
 
 	public function loadData()
 	{
-		$params['draw'] = $_REQUEST['draw'];
+		$params['draw'] = $this->request->getVar('draw');
 		$start = $_REQUEST['start'];
 		$length = $_REQUEST['length'];
 
 		$search_value = $_REQUEST['search']['value'];
 
 		if (!empty($search_value)) {
-			$total_count = $this->dataModel->search($search_value)->getNumRows();
-			$data = $this->dataModel->search($search_value, $start, $length)->getResult();
+			$total_count = $this->dataModel->getData($search_value, $start, $length)->getNumRows();
+			$data = $this->dataModel->getData($search_value, $start, $length)->getResult();
 		} else {
-			$total_count = $this->dataModel->get()->getNumRows();
-			// $data = $this->dataModel->limit($length, $start)->get()->getResult();
+			$total_count = $this->dataModel->getData(null, $start, $length)->getNumRows();
 			$data = $this->dataModel->getData(null, $start, $length)->getResult();
 		}
 
@@ -45,7 +44,7 @@ class Data extends BaseController
 		]);
 	}
 
-	public function save($id = null)
+	public function save()
 	{
 		// return json_encode(['tes' => $this->request->getVar()]);
 		// set validation rules
@@ -71,7 +70,7 @@ class Data extends BaseController
 		}
 
 		// return \json_encode($this->request->getVar());
-
+		$id = $this->request->getPost('id');
 		// simpan data ke db melalui model
 		$save = $this->dataModel->save([
 			'id' => $id,
@@ -110,9 +109,13 @@ class Data extends BaseController
 		return view('data/add', $this->data);
 	}
 
-	public function update()
+	public function update($id)
 	{
-		# code...
+		$paket = \model('PaketModel');
+		$this->data['subtitle'] = 'Update';
+		$this->data['dataPaket'] = $paket->findAll();
+		$this->data['dataPelanggan'] = $this->dataModel->find($id);
+		return \view('data/update', $this->data);
 	}
 
 	public function delete()

@@ -2,7 +2,7 @@
 <?= $this->section('content'); ?>
 <div class="card">
   <div class="card-body">
-    <a href="#" class="btn btn-info">generate RFM</a>
+    <a href="#" class="btn btn-info"><i class="fas fa-sync-alt"></i> Generate RFM</a>
   </div>
 </div>
 
