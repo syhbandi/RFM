@@ -29,13 +29,13 @@
         </a>
       </li>
 
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="pages-settings.html">
-          <i class="align-middle" data-feather="settings"></i> <span class="align-middle">Settings</span>
+      <li class="sidebar-item  <?= isset($title) && $title == 'K-Means' ? 'active' : '' ?>">
+        <a class="sidebar-link" href="/kmeans">
+          <i class="align-middle" data-feather="settings"></i> <span class="align-middle">K-Means</span>
         </a>
       </li>
 
-      <li class="sidebar-item">
+      <!-- <li class="sidebar-item">
         <a class="sidebar-link" href="pages-invoice.html">
           <i class="align-middle" data-feather="credit-card"></i> <span class="align-middle">Invoice</span>
         </a>
@@ -45,7 +45,7 @@
         <a class="sidebar-link" href="pages-blank.html">
           <i class="align-middle" data-feather="book"></i> <span class="align-middle">Blank</span>
         </a>
-      </li>
+      </li> -->
 
       <!-- <li class="sidebar-header">
         Tools & Components

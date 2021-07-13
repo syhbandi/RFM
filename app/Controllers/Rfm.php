@@ -29,10 +29,10 @@ class Rfm extends BaseController
 		$search_value = $_REQUEST['search']['value'];
 
 		if (!empty($search_value)) {
-			$total_count = $this->rfmModel->getData($search_value, $start, $length)->getNumRows();
+			$total_count = $this->rfmModel->getData($search_value, null, null)->getNumRows();
 			$data = $this->rfmModel->search($search_value, $start, $length)->getResult();
 		} else {
-			$total_count = $this->rfmModel->getData(null, $start, $length)->getNumRows();
+			$total_count = $this->rfmModel->getData(null, null, null)->getNumRows();
 			$data = $this->rfmModel->getData(null, $start, $length)->getResult();
 		}
 
