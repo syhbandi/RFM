@@ -2,6 +2,11 @@
 
 <?= $this->section('content'); ?>
 
+<div class="alert alert-success">
+  <div class="alert-message">
+    Selamat Datang, <strong><?= session('nama') ?></strong>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-xl-6 col-xxl-5 d-flex">
@@ -10,11 +15,18 @@
         <div class="col-sm-6">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title mb-4">Sales</h5>
-              <h1 class="display-5 mt-1 mb-3">2.382</h1>
+              <h5 class="card-title mb-4">Periode <?= date('F-Y') ?></h5>
               <div class="mb-1">
-                <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
-                <span class="text-muted">Since last week</span>
+                <a href="">
+                  <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> NOK</span>
+                  <span class="text-muted"><?= count($dataNOK) ?> Pelanggan</span>
+                </a>
+              </div>
+              <div class="mb-1">
+                <a href="">
+                  <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> OK</span>
+                  <span class="text-muted"><?= count($dataOK) ?> Pelanggan</span>
+                </a>
               </div>
             </div>
           </div>

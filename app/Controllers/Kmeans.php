@@ -11,8 +11,6 @@ class Kmeans extends BaseController
 	protected $data = [
 		'title' => 'K-Means'
 	];
-	protected $kmeansModel;
-	protected $rfmModel;
 
 	public function index()
 	{
@@ -28,12 +26,13 @@ class Kmeans extends BaseController
 	public function prosesHitung()
 	{
 		$rfmModel = new RfmModel();
+		$kmeansModel = new KmeansModel();
 		// buat data awal
 		$data['awal'] = $rfmModel->findAll();
 
 		// tentukan cluster
-		$m1 = [6.993321759, 0, 1];
-		$m2 = [5.867291667, 1, 1];
+		$m1 = [\round(1.1201388888889, 3), 1, 2];
+		$m2 = [\round(2.0902777777778, 3), 0, 1];
 
 		//simpan cluster di array *maaf lumayan ribet
 		$all['centroid']['awal']['m1'] = $m1;
@@ -44,12 +43,12 @@ class Kmeans extends BaseController
 
 			//hitung jarak data dengan masing-masing cluster yang terbentuk 
 			$jarakM1 = sqrt(pow(($data['awal'][$i]['r'] - $m1[0]), 2) + pow(($data['awal'][$i]['f'] - $m1[1]), 2) + pow(($data['awal'][$i]['m'] - $m1[2]), 2));
-			$jarakM2 = sqrt(pow(($data['awal'][$i]['r'] - $m2[0]), 2) + pow(($data['awal'][$i]['f'] - $m2[1]), 2) + pow(($data['awal'][$i]['f'] - $m2[2]), 2));
+			$jarakM2 = sqrt(pow(($data['awal'][$i]['r'] - $m2[0]), 2) + pow(($data['awal'][$i]['f'] - $m2[1]), 2) + pow(($data['awal'][$i]['m'] - $m2[2]), 2));
 
 			// tentukan cluster data sesuai jarak terdekat dengan cluster
 			$cluster = $jarakM1 < $jarakM2 ? 'Cluster 1' : 'Cluster 2';
-			$data['awal'][$i]['C1'] = $jarakM1;
-			$data['awal'][$i]['C2'] = $jarakM2;
+			$data['awal'][$i]['C1'] = \round($jarakM1, 3);
+			$data['awal'][$i]['C2'] = \round($jarakM2, 3);
 			$data['awal'][$i]['Cluster'] = $cluster;
 		}
 
@@ -78,8 +77,8 @@ class Kmeans extends BaseController
 		}
 
 		// cari centroid baru
-		$m1 = [$sumCluster1R / $jumlahCluster1, $sumCluster1F / $jumlahCluster1, $sumCluster1M / $jumlahCluster1];
-		$m2 = [$sumCluster2R / $jumlahCluster2, $sumCluster2F / $jumlahCluster2, $sumCluster2M / $jumlahCluster2];
+		$m1 = [round($sumCluster1R / $jumlahCluster1, 3), round($sumCluster1F / $jumlahCluster1, 3), round($sumCluster1M / $jumlahCluster1, 3)];
+		$m2 = [round($sumCluster2R / $jumlahCluster2, 3), round($sumCluster2F / $jumlahCluster2, 3), round($sumCluster2M / $jumlahCluster2, 3)];
 
 		//simpan centroid baru utk iterasi selanjutnya
 		$all['centroid']['iterasi1']['m1'] = $m1;
@@ -96,12 +95,12 @@ class Kmeans extends BaseController
 
 				// hitung jarak data dengan centroid
 				$jarakM1 = sqrt(pow(($data['iterasi' . $i][$j]['r'] - $m1[0]), 2) + pow(($data['iterasi' . $i][$j]['f'] - $m1[1]), 2) + pow(($data['iterasi' . $i][$j]['m'] - $m1[2]), 2));
-				$jarakM2 = sqrt(pow(($data['iterasi' . $i][$j]['r'] - $m2[0]), 2) + pow(($data['iterasi' . $i][$j]['f'] - $m2[1]), 2) + pow(($data['iterasi' . $i][$j]['f'] - $m2[2]), 2));
+				$jarakM2 = sqrt(pow(($data['iterasi' . $i][$j]['r'] - $m2[0]), 2) + pow(($data['iterasi' . $i][$j]['f'] - $m2[1]), 2) + pow(($data['iterasi' . $i][$j]['m'] - $m2[2]), 2));
 
 				// tentukan data masuk ke klaster mana
 				$cluster = $jarakM1 < $jarakM2 ? 'Cluster 1' : 'Cluster 2';
-				$data['iterasi' . $i][$j]['C1'] = $jarakM1;
-				$data['iterasi' . $i][$j]['C2'] = $jarakM2;
+				$data['iterasi' . $i][$j]['C1'] = \round($jarakM1, 3);
+				$data['iterasi' . $i][$j]['C2'] =  \round($jarakM2, 3);
 				$data['iterasi' . $i][$j]['Cluster'] = $cluster;
 
 				// cek hasil cluster sekarang dan sebelumnya --> jika konvergen maka iterasi berhenti
@@ -154,6 +153,8 @@ class Kmeans extends BaseController
 		}
 
 		$all['data'] = $data;
+
+
 		return \view('kmeans/hasil', $all);
 	}
 
