@@ -21,6 +21,10 @@ class KmeansMaster extends Migration
 			'c2' => [
 				'type' => 'double'
 			],
+			'cluster' => [
+				'type' => 'varchar',
+				'constraint' => 255
+			],
 			'kmeans_his_id' => [
 				'type' => 'int',
 				'constraint' => 11,

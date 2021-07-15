@@ -3,14 +3,17 @@
 namespace App\Controllers;
 
 use App\Models\DataModel;
+use App\Models\KmeansHistory;
+use App\Models\KmeansModel;
 
 class Home extends BaseController
 {
 	public function index()
 	{
-		$dataModel = new DataModel();
-		$data['dataNOK'] = $dataModel->where('layanan', 'NOK')->where('')->findAll();
-		$data['dataOK'] = $dataModel->where('layanan', 'OK')->findAll();
+		$kmeansModel = new KmeansModel();
+		$kmeansHistory = new KmeansHistory();
+		$data['periode'] = $kmeansHistory->orderBy('tanggal', 'DESC')->findAll(5);
+		$data['kmeans'] = $kmeansModel->findAll(5);
 		return view('home', $data);
 	}
 }

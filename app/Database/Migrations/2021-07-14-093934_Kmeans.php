@@ -21,6 +21,28 @@ class Kmeans extends Migration
 			'deskripsi' => [
 				'type' => 'text',
 			],
+			'c1R' => [
+				'type' => 'double',
+			],
+			'c1F' => [
+				'type' => 'double',
+			],
+			'c1M' => [
+				'type' => 'double',
+			],
+			'c2R' => [
+				'type' => 'double',
+			],
+			'c2F' => [
+				'type' => 'double',
+			],
+			'c2M' => [
+				'type' => 'double',
+			],
+			'periode' => [
+				'type' => 'varchar',
+				'constraint' => 255
+			]
 		];
 
 		$this->forge->addField($fields);

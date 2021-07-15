@@ -14,7 +14,7 @@ class KmeansModel extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = ['c1', 'c2', 'kmeans_his_id', 'rfm_id'];
+	protected $allowedFields        = ['c1', 'c2', 'kmeans_his_id', 'rfm_id', 'cluster'];
 
 	// Dates
 	protected $useTimestamps        = false;
@@ -39,4 +39,14 @@ class KmeansModel extends Model
 	protected $afterFind            = [];
 	protected $beforeDelete         = [];
 	protected $afterDelete          = [];
+
+	public function getData($kmeans_his_id)
+	{
+		$builder = $this->db->table($this->table);
+		$builder->select('kmeans.*, rfm.r, rfm.f, rfm.m, pelanggan.nama');
+		$builder->join('rfm', 'kmeans.rfm_id = rfm.id');
+		$builder->join('pelanggan', 'rfm.pelanggan_id = pelanggan.id');
+		$builder->where('kmeans_his_id', $kmeans_his_id);
+		return $builder->get();
+	}
 }

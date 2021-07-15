@@ -86,7 +86,7 @@
   <?php elseif (session()->getFlashdata('error') != null) : ?>
     <script>
       Swal.fire({
-        position: 'top-end',
+        // position: 'top-end',
         icon: 'error',
         title: '<?= session()->getFlashdata('error') ?>',
         showConfirmButton: false,

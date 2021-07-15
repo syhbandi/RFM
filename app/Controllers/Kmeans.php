@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\KmeansHistory;
 use App\Models\KmeansModel;
 use App\Models\RfmModel;
 
@@ -14,6 +15,8 @@ class Kmeans extends BaseController
 
 	public function index()
 	{
+		$kmeansHis = new KmeansHistory();
+		$this->data['kmeans_history'] = $kmeansHis->orderBy('tanggal', 'DESC')->findAll();
 		return \view('kmeans/view', $this->data);
 	}
 
@@ -23,16 +26,80 @@ class Kmeans extends BaseController
 		return \view('kmeans/hitung', $data);
 	}
 
-	public function prosesHitung()
+	public function tesForm()
 	{
 		$rfmModel = new RfmModel();
 		$kmeansModel = new KmeansModel();
+		$bulan = $this->request->getVar('bulan');
+		$tahun = $this->request->getVar('tahun');
+		$arrBulan = [
+			'1' => 'Januari',
+			'2' => 'Februari',
+			'3' => 'Maret',
+			'4' => 'April',
+			'5' => 'Meil',
+			'6' => 'Juni',
+			'7' => 'Juli',
+			'8' => 'Agustus',
+			'9' => 'September',
+			'10' => 'Oktober',
+			'11' => 'November',
+			'12' => 'Desember',
+		];
+		$periode = $arrBulan[$bulan] . ' ' . $tahun;
+
+
 		// buat data awal
-		$data['awal'] = $rfmModel->findAll();
+		$data['awal'] = $rfmModel->getBetween("tgl_aktif BETWEEN '" . $tahun . "-" . $bulan . "-26 00:00:00' 
+		AND '" . $tahun . "-" . ($bulan + 1) . "-25 00:00:00'")->getResultArray();
+		// \dd($this->request->getVar());
+		\dd($data['awal']);
+	}
+
+	public function prosesHitung()
+	{
+		// ambil data inputan
+		$bulan = $this->request->getVar('bulan');
+		$tahun = $this->request->getVar('tahun');
+		$arrBulan = [
+			'1' => 'Januari',
+			'2' => 'Februari',
+			'3' => 'Maret',
+			'4' => 'April',
+			'5' => 'Meil',
+			'6' => 'Juni',
+			'7' => 'Juli',
+			'8' => 'Agustus',
+			'9' => 'September',
+			'10' => 'Oktober',
+			'11' => 'November',
+			'12' => 'Desember',
+		];
+		$periode = $arrBulan[$bulan] . ' ' . $tahun;
+
+
+		$rfmModel = new RfmModel();
+		$kmeansModel = new KmeansModel();
+		// buat data awal
+		$data['awal'] = $rfmModel->getBetween("tgl_aktif BETWEEN '" . $tahun . "-" . $bulan . "-26 00:00:00' 
+		AND '" . $tahun . "-" . ($bulan + 1) . "-25 00:00:00'")->getResultArray();
+
+		if (\count($data['awal']) <= 0) {
+			$this->session->setFlashdata('error', 'Tidak ada data!');
+			return \redirect()->to('/kmeans');
+		}
 
 		// tentukan cluster
-		$m1 = [\round(1.1201388888889, 3), 1, 2];
-		$m2 = [\round(2.0902777777778, 3), 0, 1];
+		$m1 = [
+			\round($this->request->getVar('c1R'), 3),
+			$this->request->getVar('c1F'),
+			$this->request->getVar('c1M')
+		];
+		$m2 = [
+			\round($this->request->getVar('c2R'), 3),
+			$this->request->getVar('c2F'),
+			$this->request->getVar('c2M')
+		];
 
 		//simpan cluster di array *maaf lumayan ribet
 		$all['centroid']['awal']['m1'] = $m1;
@@ -153,8 +220,34 @@ class Kmeans extends BaseController
 		}
 
 		$all['data'] = $data;
+		$hasil = \array_pop($data);
 
+		$kmeansHis = new KmeansHistory();
+		$kmeansHis->insert([
+			'tanggal' => date('Y-m-d H:i:s'),
+			'deskripsi' => '-',
+			'c1R' => $all['centroid']['awal']['m1'][0],
+			'c1F' => $all['centroid']['awal']['m1'][1],
+			'c1M' => $all['centroid']['awal']['m1'][2],
+			'c2R' => $all['centroid']['awal']['m2'][0],
+			'c2F' => $all['centroid']['awal']['m2'][1],
+			'c2M' => $all['centroid']['awal']['m2'][2],
+			'periode' => $periode,
+		]);
 
+		for ($i = 0; $i < count($hasil); $i++) {
+			$kmeansModel->save([
+				'r' => $hasil[$i]['r'],
+				'f' => $hasil[$i]['f'],
+				'm' => $hasil[$i]['m'],
+				'c1' => $hasil[$i]['C1'],
+				'c2' => $hasil[$i]['C2'],
+				'cluster' => $hasil[$i]['Cluster'],
+				'kmeans_his_id' => $kmeansHis->getInsertID(),
+				'rfm_id' => $hasil[$i]['id'],
+			]);
+		}
+		// \dd($hasil);
 		return \view('kmeans/hasil', $all);
 	}
 
@@ -250,5 +343,12 @@ class Kmeans extends BaseController
 		}
 
 		\dd($data);
+	}
+
+	public function hasil($id)
+	{
+		$kmeansModel = new KmeansModel();
+		$this->data['kmeans'] = $kmeansModel->getData($id)->getResultArray();
+		return \view('kmeans/hasil2', $this->data);
 	}
 }

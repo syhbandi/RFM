@@ -25,7 +25,7 @@ class AuthController extends BaseController
 		$userModel = new AuthModel();
 		$data = $userModel->where($where)->first();
 
-		if (\count($data) > 0) {
+		if ($data != null) {
 			$sessionData = [
 				'id' => $data['id'],
 				'nama' => $data['nama'],
@@ -43,7 +43,7 @@ class AuthController extends BaseController
 		}
 
 		return \json_encode([
-			'success' => true,
+			'success' => false,
 			'msg' => 'Email atau Password salah',
 			'redirect' => '/home',
 			'data' => $data
