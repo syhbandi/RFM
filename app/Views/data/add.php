@@ -101,7 +101,7 @@
       <div class="form-group row">
         <label for="tgl_daftar" class="col-md-2 col-sm-12 control-label text-capitalize">tgl. daftar</label>
         <div class="col-md-6 col-sm-12">
-          <input type="text" class="form-control" name="tgl_daftar" id="tgl_daftar" placeholder="tgl. daftar Pelanggan" required>
+          <input type="text" name="tgl_daftar" class="form-control datetimepicker-input" id="tgl_daftar" data-toggle="datetimepicker" data-target="#tgl_daftar" placeholder="Tanggal Daftar" required />
           <div class="invalid-feedback text-capitalize">
             Tgl Daftar wajib diisi
           </div>
@@ -111,7 +111,7 @@
       <div class="form-group row">
         <label for="tgl_aktif" class="col-md-2 col-sm-12 control-label text-capitalize">tgl. aktif</label>
         <div class="col-md-6 col-sm-12">
-          <input type="text" class="form-control" name="tgl_aktif" id="tgl_aktif" placeholder="tgl. aktif Pelanggan" required>
+          <input type="text" name="tgl_aktif" class="form-control datetimepicker-input" id="tgl_aktif" data-toggle="datetimepicker" data-target="#tgl_aktif" placeholder="Tanggal Aktif" required />
           <div class="invalid-feedback text-capitalize">
             Tgl. Aktif wajib diisi
           </div>
@@ -125,6 +125,9 @@
   </div>
 </form>
 <script>
+  $('#tgl_daftar, #tgl_aktif').datetimepicker({
+    format: 'YYYY-MM-DD H:mm:ss'
+  });
   $('#export').click(function() {
     window.location = '/data/exportTemplate';
   })
